@@ -1,199 +1,47 @@
-# RAISE
+# RAISE: Room Arrangement for Inclusive and Supportive Environments
 
-**Room Arrangement for Inclusive and Supportive Environments**
+RAISE is a small, inspectable room-planning tool that arranges furniture around explicit accessibility-related rules. A user describes a room, its fixed features (doors and windows), movable furniture, and an accessibility profile. RAISE searches for a layout, then returns either a labeled plan with a constraint-by-constraint explanation or a distinct failure status.
 
-[![Open in Google Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/BasboAyel/RAISE/blob/main/RAISE_Room_Planner.ipynb)
+It is a research prototype that accompanies an HCI case study. It runs entirely in Google Colab with no paid software or special hardware.
 
-RAISE is an AI-assisted room-planning system that generates furniture layouts based on selected mobility, sensory, and tactile accessibility needs. It uses classical artificial intelligence to search for valid arrangements, visualize the result, and explain which requirements the arrangement satisfies.
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YOUR-USERNAME/YOUR-REPO-NAME/blob/main/raise_room_planner.ipynb)
 
-## Why RAISE?
+> **Scope.** RAISE is a classroom-scale planning model on a one-foot grid. It is **not** an ADA, architectural, medical, or safety certification, and its results are software results, not evidence of human usability or outcomes. A passed check means only that the encoded condition holds in the model.
 
-Room arrangement can become a repeated trial-and-error process when several needs must be considered at once. Furniture can fit within the walls while blocking the entrance, interrupting a travel path, removing open turning space, or placing a quiet area too close to stimulating equipment.
+## What it does
 
-RAISE represents this task as a constraint satisfaction problem. The user provides room dimensions, fixed features, movable furniture, and an accessibility profile. The solver then searches possible positions and orientations, rejects invalid arrangements, and returns a labeled layout when it finds a solution.
+- **Profiles as editable rules.** Mobility, sensory, and combined presets switch on explicit checks: a three-cell doorway and route clearance, essential-item reachability, a door-free 5×5-cell turning square (a proxy for a 60-inch turning circle), tactile reach, and quiet/noisy zone separation. A custom form lets you change the room, objects, and profile.
+- **Hard constraints vs. preferences.** Required conditions gate validity. A separate, transparent layout score ranks only layouts that already pass every constraint.
+- **Distinct outcomes.** The solver reports `invalid_input`, `solved`, `no_solution`, or `limit_reached`, so an exhausted search is never confused with an interrupted one.
+- **Visible reasoning.** Output includes a labeled grid, constraint results, search metrics, and score components.
 
-## Example Layouts
+## Techniques
 
-### Mobility bedroom
+Constraint satisfaction with backtracking search, optional minimum-remaining-values (MRV) ordering, forward checking, breadth-first route analysis, and an explainable preference score.
 
-The mobility preset preserves doorway clearance, a connected travel region, essential-item reachability, and an open turning area.
+## Quick start
 
-![RAISE mobility-bedroom layout](images/mobility_bedroom_layout.png)
+1. Click the **Open In Colab** badge above (or upload `raise_room_planner.ipynb` to Colab).
+2. Run the cells in order. The core model cell defines everything the later cells use.
+3. Choose a preset in the preset cell, or enter your own room in the custom form.
 
-### Sensory room
+## Reproducing the evaluation
 
-The sensory preset separates a quiet corner from objects tagged as noisy or stimulating.
+- **Section 8** runs the first-solution comparison of basic backtracking and MRV plus forward checking, and the best-of-50 comparison, for the selected preset.
+- **Section 8b** runs the 30-seed random-sampling baseline. It compares the deterministic score-guided best of 50 valid layouts with the best of 50 layouts drawn by randomized sequential placement with rejection (the sampler is not uniform over all valid layouts). Set `N_SEEDS` lower for a quick check. It takes about two minutes for all three rooms at 30 seeds.
 
-![RAISE sensory-room layout](images/sensory_room_layout.png)
-
-### Combined-accessibility room
-
-The combined preset coordinates mobility, tactile-reach, and sensory-separation constraints in the same room.
-
-![RAISE combined-accessibility layout](images/combined_room_layout.png)
-
-## Features
-
-- Built-in mobility, sensory, combined, and impossible-room presets
-- Custom room-design form
-- Fixed doors and windows
-- Movable furniture and sensory equipment
-- Furniture collision and boundary checking
-- Doorway-clearance checking
-- Connected travel-path checking
-- Essential-furniture reachability
-- Open turning-space checking
-- Tactile-station access
-- Separation of quiet and noisy sensory zones
-- Labeled room visualization
-- Constraint explanations
-- Search statistics and internal layout scoring
-- Separate results for invalid input, no solution, and search-limit conditions
-
-## Accessibility Profiles
-
-### Mobility
-
-Checks for a usable doorway, connected travel, reachable essential furniture, and a clear turning area.
-
-### Sensory
-
-Checks for a designated quiet area, sufficient separation from noisy or stimulating equipment, and a valid travel path.
-
-### Combined
-
-Coordinates mobility, tactile-access, and sensory-separation requirements in one layout.
-
-The profiles are simplified and editable starting points. They are not complete definitions of anyone's disability or individual accessibility needs.
-
-## What Makes It AI?
-
-RAISE uses classical artificial intelligence rather than machine learning.
-
-### Constraint satisfaction
-
-Each furniture item is a variable. Its possible positions and orientations form its domain. Spatial and accessibility requirements are represented as constraints.
-
-### Backtracking search
-
-The solver places furniture one item at a time. If a placement prevents the remaining requirements from being satisfied, it reverses that decision and tries another arrangement.
-
-### Minimum remaining values
-
-The improved search selects the unplaced item with the fewest currently valid positions first, helping expose difficult conflicts earlier.
-
-### Forward checking
-
-After each placement, the program checks that every remaining item still has at least one legal position.
-
-### Breadth-first search
-
-Breadth-first search identifies the open floor cells reachable from the doorway. This supports travel-path and furniture-reachability checks.
-
-## How to Run RAISE
-
-1. Click the **Open in Google Colab** badge above.
-2. In Colab, select **Runtime → Run all**.
-3. Wait for the setup cells to finish.
-4. Run a built-in preset or complete the custom room form.
-5. Review the generated layout, constraint explanations, and search statistics.
-
-No paid software or specialized hardware is required.
-
-## Custom Inputs
-
-The custom form accepts:
-
-- Room width and height
-- Door coordinates
-- Window coordinates
-- Furniture selection
-- Accessibility profile
-- Basic or improved search
-- Maximum number of search attempts
-
-Coordinates begin at zero, and doors and windows must be placed on a room edge. For example, in a room with a width of 10 cells, valid horizontal coordinates run from 0 through 9.
-
-## Furniture and Fixed Features
-
-Doors and windows are fixed room features. The current movable-object catalog includes:
-
-- Bed
-- Desk
-- Chair
-- Storage unit
-- Braille or tactile station
-- Quiet sensory corner
-- Sensory equipment
-
-The solver searches for valid positions and orientations for movable objects while protecting the fixed features and interior doorway clearance.
-
-## Output
-
-For a solved room, RAISE produces:
-
-- A labeled room-layout grid
-- Furniture positions and orientations
-- Reachable floor cells
-- A marked turning area when required
-- A list of satisfied constraints
-- Search attempts and backtracking statistics
-- An internal layout-preference score
-
-If no valid arrangement exists, the program can report an exhaustive no-solution result. If the attempt budget interrupts the search, it reports a search-limit result instead of incorrectly declaring the room impossible.
-
-## Layout Scoring
-
-RAISE scores only layouts that already satisfy all required constraints. The internal heuristic considers furniture distribution, wall placement for beds and storage, desk proximity to a window, and open space near the center.
-
-The score ranks valid layouts within the program. It is not a measurement of human accessibility, usability, safety, or preference.
-
-## Evaluation Snapshots
-
-Improved search evaluates multiple valid candidates, while basic backtracking stops after its first valid solution. These configurations therefore have different stopping rules and should not be interpreted as a simple speed competition.
-
-![Placement-attempt comparison](images/solver_attempts_comparison.png)
-
-The improved configuration selected higher-scoring valid layouts under the program's documented preference heuristic in the three solved presets.
-
-![Selected-layout score comparison](images/layout_quality_comparison.png)
-
-## Repository Contents
-
-- `RAISE_Room_Planner.ipynb` — interactive Google Colab notebook
-- `ai_assistive_room_setup_planner_(1).py` — Python export of the notebook
-- `images/` — generated layouts and evaluation figures
-- `README.md` — project overview and usage instructions
+Search counts (attempts, backtracks) are deterministic. Elapsed time depends on the environment.
 
 ## Limitations
 
-RAISE is an academic software prototype.
+- Evaluation is software-based on simulated rooms. No participant or practitioner evaluation has been done.
+- The one-foot grid is coarse. Door swing, approach direction, transfer space, and individual reach ranges are not modeled, and the turning-space test does not cover every permitted T-shaped configuration.
+- Sensory distance is a spatial proxy, not an acoustic or perceptual measurement.
+- The layout score reflects designer-authored heuristics and is not a measure of human preference.
+- Constraint checking is not independently implemented: the final validation reuses the search's constraint routines.
 
-- It represents rooms using simplified one-foot grid cells.
-- Its profiles cover selected mobility, tactile, and sensory considerations.
-- Sensory distance is a spatial approximation and does not model acoustics or individual perception.
-- The software has not yet been evaluated with participants.
-- Internal scores reflect designer-authored heuristics.
-- Individual users may require different measurements, objects, and conditions.
+Participatory work with disabled people and practitioners is needed to decide which requirements, explanations, and controls are actually useful.
 
-RAISE does not provide architectural, medical, safety, or ADA certification.
+## License
 
-## Future Work
-
-Future versions could include:
-
-- Individual requirement controls instead of broad profile labels
-- Smaller measurement increments
-- Door-swing and approach-direction modeling
-- Reach-range and transfer-space requirements
-- Multiple entrances
-- Lighting and sound-source modeling
-- Adjustable preference weights
-- Explanations of which constraints make a room unsatisfiable
-- Participatory evaluation with disabled users and relevant practitioners
-
-## Author
-
-**Basbo Ayelazono**  
-Computer Science major with minors in Bioinformatics and Integrated Biology  
-Dakota State University
+MIT. See [LICENSE](LICENSE).

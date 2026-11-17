@@ -11,13 +11,13 @@ plus a command-line interface.
 
 Examples
 --------
-    python raise_solver.py presets
-    python raise_solver.py solve --preset mobility_bedroom --mode best
-    python raise_solver.py solve --preset combined_room --mode mrv --plot layout.png
-    python raise_solver.py solve --width 12 --height 10 --doors "4,0;5,0;6,0" \\
+    python solver.py presets
+    python solver.py solve --preset mobility_bedroom --mode best
+    python solver.py solve --preset combined_room --mode mrv --plot layout.png
+    python solver.py solve --width 12 --height 10 --doors "4,0;5,0;6,0" \\
         --windows "11,4" --furniture bed,desk,chair,storage --profile mobility
-    python raise_solver.py compare --preset sensory_room
-    python raise_solver.py baseline --seeds 30
+    python solver.py compare --preset sensory_room
+    python solver.py baseline --seeds 30
 
 Exit status: 0 solved, 1 no solution or search limit reached, 2 invalid input.
 Requires Python 3.10+. Matplotlib is needed only for --plot.

@@ -4,9 +4,13 @@ RAISE is a small, inspectable room-planning tool that arranges furniture around 
 
 It is a research prototype that accompanies an HCI case study. It runs entirely in Google Colab with no paid software or special hardware.
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YOUR-USERNAME/YOUR-REPO-NAME/blob/main/raise_room_planner.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/BasboAyel/RAISE/blob/main/raise_room_planner.ipynb)
 
 > **Scope.** RAISE is a classroom-scale planning model on a one-foot grid. It is **not** an ADA, architectural, medical, or safety certification, and its results are software results, not evidence of human usability or outcomes. A passed check means only that the encoded condition holds in the model.
+
+![Example RAISE mobility-bedroom layout showing furniture, reachable floor, and the modeled turning area.](images/mobility_bedroom_layout.png)
+
+[Read the accompanying HCI case study (PDF)](docs/RAISE_writing_sample_revised.pdf)
 
 ## What it does
 
@@ -24,6 +28,27 @@ Constraint satisfaction with backtracking search, optional minimum-remaining-val
 1. Click the **Open In Colab** badge above (or upload `raise_room_planner.ipynb` to Colab).
 2. Run the cells in order. The core model cell defines everything the later cells use.
 3. Choose a preset in the preset cell, or enter your own room in the custom form.
+
+## Run locally
+
+Requires **Python 3.10 or newer**. The command-line solver uses the Python standard library; **Matplotlib** is required only when saving a plot. The notebook uses **Jupyter/Google Colab** and **Matplotlib**.
+
+```bash
+git clone https://github.com/BasboAyel/RAISE.git
+cd RAISE
+python -m pip install -r requirements.txt
+python solver.py presets
+python solver.py solve --preset mobility_bedroom --mode best --plot layout.png
+```
+
+To reproduce the command-line comparisons:
+
+```bash
+python solver.py compare --preset sensory_room
+python solver.py baseline --seeds 30
+```
+
+For a standard-library-only run, skip dependency installation and omit `--plot`.
 
 ## Reproducing the evaluation
 
